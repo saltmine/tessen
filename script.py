@@ -6,6 +6,7 @@ import logging
 import requests_cache
 
 from page import Page
+from storage import store_page
 
 
 log = logging.getLogger(__name__)
@@ -16,5 +17,5 @@ URL = 'https://www.etsy.com/'
 if __name__ == '__main__':
   logging.basicConfig()
   page = Page(URL)
-  import IPython
-  IPython.embed()
+  import pdb; pdb.set_trace()
+  store_page(page)
