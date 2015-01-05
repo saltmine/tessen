@@ -33,6 +33,9 @@ class Page(object):
     hashed = hashlib.md5(asset_url).hexdigest()
     file_extension = asset_url.split('.')[-1]
     name = '.'.join((hashed, file_extension))
+    # HACK. Do something more elegant here
+    if not asset_url.startswith('http'):
+      asset_url = ''.join(('http:', asset_url))
     self.assets.append(dict(name=name, url=asset_url))
     log.info('Renaming %s to %s', asset_url, name)
     return name
