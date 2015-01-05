@@ -6,3 +6,4 @@ requests==2.5.1
 boto==2.34.0
 pylint==1.4.0
 flake8==2.2.5
+PyYAML==3.11

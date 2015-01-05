@@ -1,6 +1,7 @@
 # Personal directory for utility scripts, sql dumps, etc. that is accessable
 # within your vm, but are neither relevant/necessary to keep under version control.
 private/*
+etc/override.yaml
 
 # Temp files created by various text editors
 *~
