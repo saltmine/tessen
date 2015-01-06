@@ -9,7 +9,8 @@ def store_page(page):
   """ Takes a `page.Page` object and stores the rewritten static assets
   """
   # First write the page.
-  storage.store_file('index.html', str(page.page))
+  storage.store_file('raw.html', page.raw)
+  storage.store_file('index.html', page.rewritten)
 
   for asset in page.assets:
     res = page.session.get(asset['url'])

@@ -23,8 +23,16 @@ class Page(object):
     self.assets = []
     self.session = session.generate_session()
     self.response = self.session.get(page_url)
-    self.page = bs4.BeautifulSoup(self.response.content)
+    self.soup = bs4.BeautifulSoup(self.response.content)
     self.rewrite()
+
+  @property
+  def rewritten(self):
+    return str(self.soup)
+
+  @property
+  def raw(self):
+    return self.response.content
 
   def register_and_rename_asset(self, asset_url):
     """Takes an asset url, generates a new name for it (based on md5 hash)
@@ -45,19 +53,19 @@ class Page(object):
     `register_and_rename_asset` on each asset url.
     """
     # JS
-    for script in self.page.find_all('script'):
+    for script in self.soup.find_all('script'):
       if 'src' in script.attrs:
         asset_url = script.attrs['src']
         script.attrs['src'] = self.register_and_rename_asset(asset_url)
 
     # CSS
-    for link in self.page.find_all('link'):
+    for link in self.soup.find_all('link'):
       if 'text/css' == link.attrs.get('type'):
         asset_url = link.attrs['href']
         link.attrs['href'] = self.register_and_rename_asset(asset_url)
 
     # Images
-    for img in self.page.find_all('img'):
+    for img in self.soup.find_all('img'):
       for attr_name in IMAGE_LOCATION_ATTRS:
         if attr_name in img.attrs:
           break
