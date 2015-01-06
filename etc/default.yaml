@@ -2,7 +2,7 @@
 filestorage:
   use_remote_aws: false
   local:
-    local_path: '/tmp/fkt'
+    local_path: 'static'
     hosted_path: 'http://s3.com'
   remote_aws:
     # Do NOT commit AWS secrets here. Use override.yaml
