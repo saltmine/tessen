@@ -16,3 +16,15 @@ def store_page(page):
     res = page.session.get(asset['url'])
     # TODO: Error handler
     storage.store_file(asset['name'], res.content)
+
+  _store_hash_map(page.assets)
+
+
+def _store_hash_map(assets, name=None):
+  """
+  """
+  data = ['Hashed name, Original Asset URL']
+  data.extend(['%s, %s' % (a['name'], a['url']) for a in assets])
+  if name is None:
+    name = 'hashmap.txt'
+  storage.store_file(name, '\n'.join(data))
