@@ -21,7 +21,6 @@ class Page(object):
     self.url = page_url
     self.parsed = urlparse.urlparse(page_url)
     self.assets = []
-    self.css_files = []
     self.session = session.generate_session()
     self.response = self.session.get(page_url)
     self.soup = bs4.BeautifulSoup(self.response.content)
@@ -69,11 +68,10 @@ class Page(object):
         asset_url = script.attrs['src']
         script.attrs['src'] = self.register_and_rename_asset(asset_url)
 
-    # CSS
+    # CSS, etc
     for link in self.soup.find_all('link'):
-      if 'text/css' == link.attrs.get('type'):
+      if link.attrs.get('href'):
         asset_url = link.attrs['href']
-        self.css_files.append(asset_url)
         link.attrs['href'] = self.register_and_rename_asset(asset_url)
 
     # Images
