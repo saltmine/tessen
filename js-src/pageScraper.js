@@ -1,0 +1,67 @@
+#!/usr/bin/env phantomjs
+/**
+ * 
+ */
+
+
+// Imports
+var page = require('webpage').create();
+var system = require('system');
+
+
+// Globals
+var result = {success: false, args: system.args};
+var url = 'https://google.com/';
+
+
+
+
+function dumpResults(exitCode) {
+  exitCode = typeof exitCode !== 'undefined' ? exitCode : 0;
+  console.log(JSON.stringify(result, null, 4));
+  phantom.exit(exitCode);
+}
+
+// Register document object listener
+page.onInitialized = function() {
+  page.evaluate(function() {
+    document.addEventListener('DOMContentLoaded', function() {
+      window.callPhantom('DOMContentLoaded');
+    }, false);
+  });
+};
+
+
+page.onResourceReceived = function(request) {
+  if (request.url === url) {
+    result.status = request.status;
+    if (request.status >= 300 && request.status < 400) {
+      url = request.redirectURL;
+      result.redirectURL = url;
+      //console.log('Redirect!!! New: ' + url);
+    } else if (request.status < 200 && request.status >= 300 ) {
+      // Fail here
+      dumpResults(1);
+    } 
+    // Sucess
+    result.headers = request.headers;
+  }
+};
+
+
+page.onCallback = function(data) {
+  if (data === "DOMContentLoaded") {
+    result.html = page.content;
+    dumpResults();
+  }
+};
+
+
+// Runit
+if (system.args.length === 2){
+  result.url = system.args[1];
+} else {
+  dumpResults(1);
+}
+
+page.open(url);
