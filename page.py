@@ -17,13 +17,18 @@ class Page(object):
   """ Grabs a webpage from `page_url`, rewrites static asset routes
   """
 
-  def __init__(self, page_url):
+  def __init__(self, page_url, html=None):
     self.url = page_url
     self.parsed = urlparse.urlparse(page_url)
     self.assets = []
     self.session = session.generate_session()
-    self.response = self.session.get(page_url)
-    self.soup = bs4.BeautifulSoup(self.response.content)
+    if html is None:
+      self._response = self.session.get(page_url)
+      self._html = self._response.content
+    else:
+      self._response = None
+      self._html = html
+    self.soup = bs4.BeautifulSoup(self._html)
     self.rewrite_html()
 
   @property
@@ -36,7 +41,7 @@ class Page(object):
   def raw(self):
     """Untouched HTML response
     """
-    return self.response.content
+    return self._html
 
   def register_and_rename_asset(self, asset_url):
     """Takes an asset url, generates a new name for it (based on md5 hash)
