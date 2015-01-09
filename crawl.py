@@ -11,11 +11,12 @@ from storage import store_page
 
 log = logging.getLogger(__name__)
 requests_cache.install_cache()
-URL = 'https://www.etsy.com/'
+URL = 'https://www.jcrew.com/womens_feature/NewArrivals/PRD~B8448/B8448.jsp?intcmp=cathead_w_newarrivals'
+URL = 'http://google.com'
 
 
 if __name__ == '__main__':
   logging.basicConfig()
   page = Page(URL)
-  import pdb; pdb.set_trace()
+  import IPython; IPython.embed()
   store_page(page)

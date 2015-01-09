@@ -3,14 +3,28 @@
 """
 import bs4
 import hashlib
+import json
 import logging
+import os
+import subprocess
 import urlparse
 
+import config as cfg
 import session
 
 
 log = logging.getLogger(__name__)
 IMAGE_LOCATION_ATTRS = ('src', 'data-src')
+PHANTOM_BIN = '/usr/local/bin/phantomjs'
+PHANTOM_SCRIPT = os.path.join(cfg.basedir, 'js-src', 'pageScraper.js')
+
+
+def get_page_from_webkit(url):
+  cmd = [PHANTOM_BIN, PHANTOM_SCRIPT, url]
+  proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+  out, err = proc.communicate()
+  results = json.loads(out)
+  return results['html']
 
 
 class Page(object):
