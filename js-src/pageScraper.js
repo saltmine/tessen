@@ -47,7 +47,7 @@
       } else if (request.status < 200 && request.status >= 300) {
         // Fail here
         dumpResults(1);
-      } 
+      }
       // Sucess
       result.headers = request.headers;
     }
@@ -63,7 +63,7 @@
 
   page.settings.resourceTimeout = 5000; // 5 seconds
   page.onResourceTimeout = function(e) {
-    system.stderr.writeline("He's dead");
+    console.log("He's dead");
     phantom.exit(1);
   };
 
