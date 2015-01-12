@@ -20,13 +20,11 @@ IMAGE_LOCATION_ATTRS = ('src', 'data-src')
 # TODO: Get this phantom stuff somewhere else
 PHANTOM_BIN = '/usr/local/bin/phantomjs'
 PHANTOM_SCRIPT = os.path.join(cfg.basedir, 'js-src', 'pageScraper.js')
-PHANTOM_SWITCHES = ('--ssl-protocol=tlsv1', '--ignore-ssl-errors=true')
+PHANTOM_SWITCHES = ['--ssl-protocol=tlsv1', '--ignore-ssl-errors=true']
 
 
 def get_page_from_webkit(url):
-  cmd = [PHANTOM_BIN]
-  cmd.extend(PHANTOM_SWITCHES)
-  cmd.extend([PHANTOM_SCRIPT, url])
+  cmd = [PHANTOM_BIN] + PHANTOM_SWITCHES + [PHANTOM_SCRIPT, url]
   proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
   out, err = proc.communicate()
   results = json.loads(out)
