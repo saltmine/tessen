@@ -63,7 +63,7 @@ class Page(object):
     """
     return self._html
 
-  def register_and_rename_asset(self, asset_url):
+  def register_and_rename_asset(self, asset_url, default_file_extension=None):
     """Takes an asset url, generates a new name for it (based on md5 hash)
     then adds a dictionary of the new name and url to the assets list.
 
@@ -78,9 +78,10 @@ class Page(object):
     if asset_url.startswith('//'): # Scheme less
       asset_url = ''.join((self.parsed.scheme, ':', asset_url))
     elif not asset_url.startswith('http'): # Relative
-      asset_url = ''.join((self.url, asset_url))
-    self.assets.append(dict(name=name, url=asset_url))
-    log.info('Renaming %s to %s', asset_url, name)
+      asset_url = urlparse.urljoin(self.url, asset_url)
+    self.assets.append(dict(name=name, url=asset_url,
+        default_file_extension=default_file_extension))
+    log.info('Renaming "%s" to "%s"', asset_url, name)
     return name
 
   def rewrite_html(self):
@@ -91,13 +92,20 @@ class Page(object):
     for script in self.soup.find_all('script'):
       if 'src' in script.attrs:
         asset_url = script.attrs['src']
-        script.attrs['src'] = self.register_and_rename_asset(asset_url)
+        script.attrs['src'] = self.register_and_rename_asset(asset_url, '.js')
 
     # CSS, etc
     for link in self.soup.find_all('link'):
       if link.attrs.get('href'):
         asset_url = link.attrs['href']
-        link.attrs['href'] = self.register_and_rename_asset(asset_url)
+        link.attrs['href'] = self.register_and_rename_asset(asset_url, '.css')
+
+    # Iframes
+    for iframe in self.soup.find_all('iframe'):
+      if 'src' in iframe.attrs:
+        asset_url = iframe.attrs['src']
+        iframe.attrs['src'] = self.register_and_rename_asset(asset_url,
+            '.html')
 
     # Images
     for img in self.soup.find_all('img'):
@@ -109,4 +117,4 @@ class Page(object):
       if attr_name is None:
         continue
       asset_url = img.attrs[attr_name]
-      img.attrs[attr_name] = self.register_and_rename_asset(asset_url)
+      img.attrs[attr_name] = self.register_and_rename_asset(asset_url, '.jpeg')
