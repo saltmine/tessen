@@ -69,9 +69,9 @@ class Page(object):
     :rtype: str
     """
     name = hashlib.md5(asset_url).hexdigest()
-    if asset_url.startswith('//'):
+    if asset_url.startswith('//'): # Scheme less
       asset_url = ''.join((self.parsed.scheme, ':', asset_url))
-    elif not asset_url.startswith('http'):
+    elif not asset_url.startswith('http'): # Relative
       asset_url = ''.join((self.url, asset_url))
     self.assets.append(dict(name=name, url=asset_url))
     log.info('Renaming %s to %s', asset_url, name)
