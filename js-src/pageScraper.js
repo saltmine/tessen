@@ -16,9 +16,9 @@
 
   // Runit
   if (system.args.length === 2){
+    system.stderr.writeLine(system.args); // debug
     url = system.args[1];
   }
-
 
 
   function dumpResults(exitCode) {
@@ -26,6 +26,7 @@
     console.log(JSON.stringify(result, null, 4));
     phantom.exit(exitCode);
   }
+
 
   // Register document object listener
   page.onInitialized = function() {
@@ -44,7 +45,7 @@
         url = request.redirectURL;
         result.redirectURL = url;
         console.log('Redirect!!! New: ' + url);
-      } else if (request.status < 200 && request.status >= 300) {
+      } else if (request.status < 200 || request.status >= 300) {
         // Fail here
         dumpResults(1);
       }
@@ -62,10 +63,11 @@
   };
 
   page.settings.resourceTimeout = 5000; // 5 seconds
-  page.onResourceTimeout = function(e) {
+  page.onResourceTimeout = function(r) {
+    console.log(r);
     console.log("He's dead");
     phantom.exit(1);
   };
 
   page.open(url);
-})();
+}());
